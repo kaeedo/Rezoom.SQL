@@ -34,7 +34,7 @@ module NetStandardHacks =
                 loadInstance "System.Data.SQLite" "System.Data.SQLite.SQLiteFactory"
             | "npgsql" ->
                 loadInstance "Npgsql" "Npgsql.NpgsqlFactory"
-            | "microsoft.data.qqlite" ->
+            | "microsoft.data.sqlite" ->
                 loadInstance "Microsoft.Data.Sqlite" "Microsoft.Data.Sqlite.SqliteFactory"
             | other ->
                 failwithf "Tragically unsupported provider name ``%s``" providerName
@@ -64,5 +64,3 @@ type DefaultConnectionProvider() =
             cmd.ExecuteNonQuery() |> ignore
         conn
     override __.Open(name) = DefaultConnectionProvider.Open(name)
-
-

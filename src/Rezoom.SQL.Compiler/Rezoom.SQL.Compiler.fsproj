@@ -51,9 +51,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FParsec-Pipes" Version="1.1.0" />
-    <PackageReference Include="Rezoom" Version="1.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
+    <PackageReference Include="FParsec-Pipes" Version="1.1.1" />
+    <PackageReference Include="Rezoom" Version="1.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
   </ItemGroup>
 
   <ItemGroup>

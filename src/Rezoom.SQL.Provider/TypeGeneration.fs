@@ -1,11 +1,10 @@
 ﻿module private Rezoom.SQL.Provider.TypeGeneration
 open System
+open System.Configuration
 open System.Collections.Generic
 open System.Text.RegularExpressions
 open System.Reflection
-open FSharp.Core.CompilerServices
 open FSharp.Quotations
-open FSharp.Reflection
 open ProviderImplementation.ProvidedTypes
 open ProviderImplementation.ProvidedTypes.UncheckedQuotations
 open Rezoom
@@ -309,38 +308,21 @@ let generateMigrationMembers
     do
         let pars =
             [   ProvidedParameter("config", typeof<MigrationConfig>)
-                ProvidedParameter("connectionName", typeof<string>)
+                ProvidedParameter("connection", typeof<ConnectionStringSettings>)
             ]
         let meth = ProvidedMethod("Migrate", pars, typeof<unit>, isStatic = true, invokeCode = function
-            | [ config; connectionName ] -> 
+            | [ config; connection ] ->
                 let backend =
                     <@ fun () ->
                         (%backend.MigrationBackend)
-                            (DefaultConnectionProvider.ResolveConnectionString(%%connectionName))
+                            (%%connection)
                     @>
                 <@@ let migrations : string MigrationTree array = %%Expr.PropertyGet(migrationProperty)
                     migrations.Run(%%config, %%(upcast backend))
                 @@>
             | _ -> bug "Invalid migrate argument list")
         provided.AddMember meth
-    do
-        let connectionName = Quotations.Expr.Value(config.ConnectionName)
-        let pars =
-            [   ProvidedParameter("config", typeof<MigrationConfig>)
-            ]
-        let meth = ProvidedMethod("Migrate", pars, typeof<unit>, isStatic = true, invokeCode = function
-            | [ config ] ->
-                let backend =
-                    <@ fun () ->
-                        (%backend.MigrationBackend)
-                            (DefaultConnectionProvider.ResolveConnectionString(%%connectionName))
-                    @>
-                <@@ let migrations : string MigrationTree array = %%Expr.PropertyGet(migrationProperty)
-                    migrations.Run(%%config, %%(upcast backend))
-                @@>
-            | _ -> bug "Invalid migrate argument list")
-        provided.AddMember meth
-
+   
 let generateModelType (generate : GenerateType) =
     let backend = generate.UserModel.Backend
     let provided =

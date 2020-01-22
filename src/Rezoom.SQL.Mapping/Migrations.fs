@@ -1,5 +1,6 @@
 ﻿namespace Rezoom.SQL.Migrations
 open System
+open System.Configuration
 open System.Collections.Generic
 open System.Data.Common
 open System.Runtime.CompilerServices
@@ -139,11 +140,14 @@ type MigrationConfig =
         AllowRetroactiveMigrations : bool
         /// Function to call after running a migration. Typically this would write to stdout or a log file.
         LogMigrationRan : string Migration -> unit
+        /// Set the service config
+        ConnectionStringSettings : ConnectionStringSettings
     }
     /// Default migration config. Simple and safe.
     static member Default =
         {   AllowRetroactiveMigrations = false
             LogMigrationRan = fun _ -> ()
+            ConnectionStringSettings = ConnectionStringSettings()
         }
 
 type MigrationRuntimeException(migrationName : string, inner : Exception) =
